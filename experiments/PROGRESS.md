@@ -3,6 +3,7 @@
 **Last updated: 2026-07-10 02:24 SGT (UTC+8)**
 **Author:** Minh Nguyen (min-p author) + agent-assisted exploration
 **Branch:** `distribution-aware-block-selection` (fork of `goodfire-ai/block-sparse-featurizer`)
+**Related prior work:** min-p sampling — paper [arXiv:2407.01082](https://arxiv.org/abs/2407.01082) (ICLR 2025 oral); replication/iteration repo (min-p → min-z lineage): [github.com/menhguin/top_nsigma](https://github.com/menhguin/top_nsigma)
 **Status:** exploratory / one evening's work. Numbers are on a non-gated timm mirror of DINOv3 ViT-B/16 (identical Meta checkpoint, hash 73cec8be) pending a bit-for-bit re-run on the now-approved `facebook/dinov3-*` weights. Shape/ordering conclusions are robust to this; treat absolute numbers as provisional.
 
 ---
