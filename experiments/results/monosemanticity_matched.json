@@ -1,0 +1,18 @@
+{
+  "topk_k12": {
+    "R2": 0.8335,
+    "meanL0": 12.0,
+    "n_alive": 256,
+    "M1_passenger_rate": 0.361,
+    "M2_median_fire_freq": 0.0227,
+    "M3_topfire_coherence": 0.3797
+  },
+  "chi_q2.0": {
+    "R2": 0.8364,
+    "meanL0": 11.88,
+    "n_alive": 256,
+    "M1_passenger_rate": 0.3395,
+    "M2_median_fire_freq": 0.0205,
+    "M3_topfire_coherence": 0.3839
+  }
+}

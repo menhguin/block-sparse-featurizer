@@ -1,0 +1,6 @@
+# heavy + regenerable (produced by scripts/00 and scripts/01,04) — kept out of git
+*.npy
+*.pt
+results/models/
+results/models_e2/
+__pycache__/

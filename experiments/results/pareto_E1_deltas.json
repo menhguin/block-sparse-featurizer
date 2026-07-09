@@ -1,0 +1,38 @@
+{
+  "vanilla_topk": {
+    "topk": {
+      "R2_at_L0_8": 0.8133,
+      "delta_vs_topk": 0.0
+    },
+    "min_z": {
+      "R2_at_L0_8": 0.7843,
+      "delta_vs_topk": -0.029
+    },
+    "global_floor": {
+      "R2_at_L0_8": 0.808,
+      "delta_vs_topk": -0.0054
+    },
+    "perpatch_chi": {
+      "R2_at_L0_8": 0.8106,
+      "delta_vs_topk": -0.0028
+    }
+  },
+  "grass_topk": {
+    "topk": {
+      "R2_at_L0_8": 0.787,
+      "delta_vs_topk": 0.0
+    },
+    "min_z": {
+      "R2_at_L0_8": 0.7515,
+      "delta_vs_topk": -0.0355
+    },
+    "global_floor": {
+      "R2_at_L0_8": 0.7682,
+      "delta_vs_topk": -0.0188
+    },
+    "perpatch_chi": {
+      "R2_at_L0_8": 0.7831,
+      "delta_vs_topk": -0.0039
+    }
+  }
+}

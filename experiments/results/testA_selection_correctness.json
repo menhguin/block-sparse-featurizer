@@ -1,0 +1,115 @@
+{
+  "target_mean_L0": 5.41,
+  "kstar": {
+    "mean": 5.41,
+    "CV": 0.308,
+    "p5": 3,
+    "p95": 8
+  },
+  "selectors": {
+    "fixed_k=5": {
+      "corr_with_kstar": NaN,
+      "mean_over": 0.42,
+      "mean_trunc": 0.84,
+      "total_error": 1.26,
+      "terciles": {
+        "simple": {
+          "mean_kstar": 3.5,
+          "mean_selected": 5.0,
+          "over_select": 1.47,
+          "truncate": 0.0
+        },
+        "medium": {
+          "mean_kstar": 5.0,
+          "mean_selected": 5.0,
+          "over_select": 0.0,
+          "truncate": 0.0
+        },
+        "complex": {
+          "mean_kstar": 6.8,
+          "mean_selected": 5.0,
+          "over_select": 0.0,
+          "truncate": 1.84
+        }
+      }
+    },
+    "chi_floor(q=2.71)": {
+      "corr_with_kstar": 0.576,
+      "mean_over": 0.49,
+      "mean_trunc": 0.49,
+      "total_error": 0.99,
+      "terciles": {
+        "simple": {
+          "mean_kstar": 3.5,
+          "mean_selected": 4.1,
+          "over_select": 0.7,
+          "truncate": 0.08
+        },
+        "medium": {
+          "mean_kstar": 5.0,
+          "mean_selected": 5.3,
+          "over_select": 0.53,
+          "truncate": 0.23
+        },
+        "complex": {
+          "mean_kstar": 6.8,
+          "mean_selected": 6.3,
+          "over_select": 0.34,
+          "truncate": 0.9
+        }
+      }
+    },
+    "min_z(p=0.28)": {
+      "corr_with_kstar": 0.517,
+      "mean_over": 0.91,
+      "mean_trunc": 0.91,
+      "total_error": 1.82,
+      "terciles": {
+        "simple": {
+          "mean_kstar": 3.5,
+          "mean_selected": 3.0,
+          "over_select": 0.09,
+          "truncate": 0.61
+        },
+        "medium": {
+          "mean_kstar": 5.0,
+          "mean_selected": 4.4,
+          "over_select": 0.23,
+          "truncate": 0.88
+        },
+        "complex": {
+          "mean_kstar": 6.8,
+          "mean_selected": 7.5,
+          "over_select": 1.81,
+          "truncate": 1.12
+        }
+      }
+    },
+    "global_floor": {
+      "corr_with_kstar": 0.519,
+      "mean_over": 0.55,
+      "mean_trunc": 0.55,
+      "total_error": 1.11,
+      "terciles": {
+        "simple": {
+          "mean_kstar": 3.5,
+          "mean_selected": 3.9,
+          "over_select": 0.55,
+          "truncate": 0.14
+        },
+        "medium": {
+          "mean_kstar": 5.0,
+          "mean_selected": 5.2,
+          "over_select": 0.53,
+          "truncate": 0.33
+        },
+        "complex": {
+          "mean_kstar": 6.8,
+          "mean_selected": 6.5,
+          "over_select": 0.57,
+          "truncate": 0.94
+        }
+      }
+    }
+  }
+}

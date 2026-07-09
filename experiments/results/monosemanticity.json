@@ -1,0 +1,19 @@
+{
+  "_random_coherence_floor": 0.0005,
+  "topk_k8": {
+    "R2": 0.8117,
+    "meanL0": 8.0,
+    "n_alive": 256,
+    "M1_passenger_rate": 0.2422,
+    "M2_median_fire_freq": 0.0166,
+    "M3_topfire_coherence": 0.3794
+  },
+  "chi_q2.0": {
+    "R2": 0.8364,
+    "meanL0": 11.88,
+    "n_alive": 256,
+    "M1_passenger_rate": 0.3395,
+    "M2_median_fire_freq": 0.0205,
+    "M3_topfire_coherence": 0.3839
+  }
+}
