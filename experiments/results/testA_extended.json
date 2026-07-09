@@ -1,0 +1,52 @@
+{
+  "kstar_mean": 5.41,
+  "kstar_CV": 0.308,
+  "prior_baselines": {
+    "perpatch_chi": 0.576,
+    "min_z": 0.517,
+    "global_floor": 0.331,
+    "fixed_k": 0.0
+  },
+  "selectors": {
+    "fixed_k=5": {
+      "mean_selected": 5.0,
+      "std_selected": 0.0,
+      "corr_with_kstar": 0.0,
+      "mean_over": 0.42,
+      "mean_trunc": 0.84,
+      "total_error": 1.26
+    },
+    "p_less_L1": {
+      "mean_selected": 13.98,
+      "std_selected": 9.13,
+      "corr_with_kstar": 0.695,
+      "mean_over": 8.58,
+      "mean_trunc": 0.0,
+      "total_error": 8.58
+    },
+    "p_less_E": {
+      "mean_selected": 2.24,
+      "std_selected": 1.26,
+      "corr_with_kstar": 0.4,
+      "mean_over": 0.0,
+      "mean_trunc": 3.17,
+      "total_error": 3.17
+    },
+    "diffsample": {
+      "mean_selected": 1.66,
+      "std_selected": 1.01,
+      "corr_with_kstar": 0.044,
+      "mean_over": 0.0,
+      "mean_trunc": 3.75,
+      "total_error": 3.75
+    },
+    "top_h(a=0.27)": {
+      "mean_selected": 5.41,
+      "std_selected": 0.65,
+      "corr_with_kstar": -0.528,
+      "mean_over": 0.77,
+      "mean_trunc": 0.77,
+      "total_error": 1.54
+    }
+  }
+}
