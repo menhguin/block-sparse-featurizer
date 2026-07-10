@@ -1,0 +1,32 @@
+{
+  "kstar_mean": 5.41,
+  "kstar_CV": 0.308,
+  "alpha_bh_matched": 0.0248,
+  "alpha_by_matched": 0.1519,
+  "prior_baselines": {
+    "perpatch_chi": 0.576,
+    "p_less_L1": 0.695,
+    "fixed_k": 0.0
+  },
+  "results": {
+    "BH_chi_matched": {
+      "mean_selected": 5.41,
+      "std": 1.68,
+      "corr_with_kstar": 0.57,
+      "total_error": 1.03
+    },
+    "BY_chi_matched": {
+      "mean_selected": 5.41,
+      "std": 1.68,
+      "corr_with_kstar": 0.57,
+      "total_error": 1.03
+    },
+    "BH_chi_alpha0.1": {
+      "mean_selected": 6.27,
+      "std": 2.15,
+      "corr_with_kstar": 0.621,
+      "total_error": 1.36
+    }
+  },
+  "alpha_interpretation": "alpha = per-patch target FDR (expected false-active fraction among selected blocks). Dimensionless, transferable."
+}
