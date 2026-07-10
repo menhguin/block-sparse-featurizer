@@ -1,0 +1,56 @@
+{
+  "low_kstar": 4.22,
+  "high_kstar": 6.84,
+  "transfers": {
+    "CALIB_LOW->TEST_HIGH": {
+      "calib_fixed_k": 4,
+      "calib_bh_alpha": 0.0049,
+      "calib_chi_q": 3.005,
+      "fixed_k": {
+        "mean_selected": 4.0,
+        "test_kstar": 6.84,
+        "corr": 0.0,
+        "total_error": 2.84
+      },
+      "BH_chi": {
+        "mean_selected": 5.54,
+        "test_kstar": 6.84,
+        "corr": 0.054,
+        "total_error": 1.61
+      },
+      "chi_floor": {
+        "mean_selected": 5.42,
+        "test_kstar": 6.84,
+        "corr": 0.034,
+        "total_error": 1.62
+      },
+      "realized_fdr_calib": 0.0,
+      "realized_fdr_test": 0.0
+    },
+    "CALIB_HIGH->TEST_LOW": {
+      "calib_fixed_k": 7,
+      "calib_bh_alpha": 0.0498,
+      "calib_chi_q": 2.547,
+      "fixed_k": {
+        "mean_selected": 7.0,
+        "test_kstar": 4.22,
+        "corr": 0.0,
+        "total_error": 2.78
+      },
+      "BH_chi": {
+        "mean_selected": 4.86,
+        "test_kstar": 4.22,
+        "corr": 0.595,
+        "total_error": 0.91
+      },
+      "chi_floor": {
+        "mean_selected": 5.01,
+        "test_kstar": 4.22,
+        "corr": 0.599,
+        "total_error": 0.97
+      },
+      "realized_fdr_calib": 0.0,
+      "realized_fdr_test": 0.0
+    }
+  }
+}
