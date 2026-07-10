@@ -4,3 +4,5 @@
 results/models/
 results/models_e2/
 __pycache__/
+data/
+results/acts_imagenette.npy

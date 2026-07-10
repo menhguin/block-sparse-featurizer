@@ -1,0 +1,34 @@
+{
+  "imagenette_kstar_mean": 10.12,
+  "imagenette_kstar_CV": 1.413,
+  "rabbit_kstar_mean": 5.41,
+  "frozen_knobs": {
+    "fixed_k": 5,
+    "bh_alpha": 0.1,
+    "chi_q": 2.71
+  },
+  "results": {
+    "fixed_k_frozen": {
+      "mean_selected": 5.0,
+      "corr": 0.0,
+      "total_error": 8.21,
+      "mean_over": 1.54,
+      "mean_trunc": 6.67
+    },
+    "BH_chi_frozen": {
+      "mean_selected": 2.14,
+      "corr": 0.14,
+      "total_error": 8.54,
+      "mean_over": 0.27,
+      "mean_trunc": 8.26
+    },
+    "chi_floor_frozen": {
+      "mean_selected": 1.48,
+      "corr": 0.143,
+      "total_error": 8.83,
+      "mean_over": 0.09,
+      "mean_trunc": 8.74
+    }
+  },
+  "realized_fdr_proxy_rabbitalpha_on_imagenette": 0.0
+}
