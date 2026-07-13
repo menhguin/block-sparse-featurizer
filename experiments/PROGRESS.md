@@ -1,91 +1,82 @@
-# Distribution-Aware Block Selection for BSF — Progress Notes
-
-**Last updated: 2026-07-10 02:24 SGT (UTC+8)**
-**Author:** Minh Nguyen (min-p author) + agent-assisted exploration
-**Branch:** `distribution-aware-block-selection` (fork of `goodfire-ai/block-sparse-featurizer`)
-**Related prior work:** min-p sampling — paper [arXiv:2407.01082](https://arxiv.org/abs/2407.01082) (ICLR 2025 oral); replication/iteration repo (min-p → min-z lineage): [github.com/menhguin/top_nsigma](https://github.com/menhguin/top_nsigma)
-**Status:** exploratory / one evening's work. Numbers are on a non-gated timm mirror of DINOv3 ViT-B/16 (identical Meta checkpoint, hash 73cec8be) pending a bit-for-bit re-run on the now-approved `facebook/dinov3-*` weights. Shape/ordering conclusions are robust to this; treat absolute numbers as provisional.
-
+---
+title: "BSF distribution-aware block selection — MASTER PROGRESS"
+created: 2026-07-11
+updated: 2026-07-11
+type: concept
+tags: [ai-research, programmable-models, bsf, min-p, fdr, interpretability]
+status: active exploration — FDR-v1 works, Test B (transfer) is the load-bearing next test
+supersedes_as_entrypoint: [bsf-shape-findings, bsf-e1-pareto-findings, bsf-e2-robustness-findings, bsf-monosemanticity-findings, bsf-testA-findings, bsf-testA-extended-findings, bsf-fdr-v1-findings]
 ---
 
-## TL;DR
+# BSF Distribution-Aware Block Selection — Master Progress
 
-Port the **min-p / top-nσ** adaptive-truncation idea from LLM sampling onto **block selection** in a Block-Sparse Featurizer. Stock BSF uses **block top-k** (fixed count k=8 blocks per patch) — exactly analogous to top-k *sampling*, and subject to the same critique min-p was built for: a fixed count over-selects on simple inputs (admits noise) and truncates on complex ones (drops real concepts), because the true per-input concept count is a random variable.
+**Single entry point** for the min-z/χ-floor/FDR investigation (task #756). The dated
+`bsf-*-findings-*.md` files are the detailed audit trail per experiment; this doc is
+the narrative + current state. Experiment code + data: `~/local/ai-research/2026-07-09-bsf-distribution-aware-thresholds/`.
+Public branch: `github.com/menhguin/block-sparse-featurizer/tree/distribution-aware-block-selection`.
 
-**Headline result (honest, includes the negatives):**
-1. Distribution-aware selection gives **NO win on in-distribution reconstruction R²** (parity with top-k) or on operating-point robustness. Two clean negatives.
-2. But it IS **materially more selection-*correct***: at matched mean-L0, a noise-referenced (χ) threshold tracks each patch's *true* support, cutting total selection error ~21% vs fixed-k — and fixed-k's errors are **entirely on the complexity tails** (over-selects simple patches, truncates complex ones), which **cancel in the aggregate R²-average**. So the value is a *complexity-robustness / generalization* property, not a reconstruction win — exactly as min-p/top-nσ's real value was robustness (temperature-invariance), not higher greedy accuracy.
-3. **noise-referenced ≫ max-referenced.** The min-p-style `p·max` port ("min-z") works poorly here because the max-norm block is often a generic/positional block — an untrustworthy anchor, the *opposite* of LLM sampling where the max logit is the model's best guess. A noise-floor (χ) reference is the right transplant.
+## The one-line thesis (evolved over the session)
 
----
+Started: "port min-p/top-nσ adaptive truncation onto BSF block selection (replace fixed
+top-k=8 with a distribution-aware threshold)." Ended: **"bring null-referenced,
+α-controlled (FDR-style) variable-size selection to block-sparse featurizers, using an
+empirically-MEASURED χ₃ noise null — a principled, transferable alternative to the
+arbitrary fixed-k, whose payoff is complexity-robustness/generalisation, not
+in-distribution reconstruction."**
 
-## Why the analogy (the core mapping)
+## The problem
 
-| LLM sampling | BSF block selection |
-|---|---|
-| logits over vocab | pre-gate L2 norms over 256 candidate blocks (per patch) |
-| truncation sampler picks which tokens survive | selector picks which blocks are "active" |
-| **top-k** = fixed count | **block top-k** (stock BSF, k=8) = fixed count |
-| min-p / top-nσ = variable count from distribution shape | this work: variable count from per-patch norm distribution |
-| per-token concept count varies | per-patch concept count varies (measured CV ≈ 0.31–0.68) |
+Stock BSF picks the fixed top-k=8 largest-norm blocks per input patch — analogous to
+top-k *sampling*. But the true number of concepts per patch is a latent random variable
+(measured CV ≈ 0.31). Fixed-k over-selects on simple patches (admits noise) and truncates
+on complex ones (drops real concepts). We want ONE rule that adapts the count per input
+and transfers across distribution shift without re-tuning.
 
----
+## Experiment ledger (chronological — the reasoning arc)
 
-## Experiments (chronological — the reasoning arc matters)
+| # | Experiment | Finding | Detail file |
+|---|---|---|---|
+| 0 | Distribution shape | NOT bimodal, BUT inactive-block norms fit **χ₃ near-perfectly (KS-D=0.0019)** → clean measured noise null exists. k=8 unjustified, cuts a smooth continuum. | `bsf-shape-findings-2026-07-09` |
+| E1 | Pareto on frozen top-k magnitudes | All adaptive lose at matched L0 (biased test — magnitudes co-adapted to top-k). Signal: **noise-ref (χ) ≫ max-ref (min-z)** by 10×. min-z dropped. | `bsf-e1-pareto-findings-2026-07-09` |
+| E2 | Co-adapted training + operating-point robustness | top-k(8) most robust single model; no χ advantage on THIS axis. Temp-invariance analogy breaks (sparsity budget is train-time, not eval-time). χ has unstable q→L0 targeting. | `bsf-e2-robustness-findings-2026-07-09` |
+| fork-a | Monosemanticity at matched L0 | χ wins all 4 metrics but **within noise**. No material monosemanticity win. | `bsf-monosemanticity-findings-2026-07-09` |
+| **A** | **Selection-correctness vs per-patch true support k*** | **THE REFRAME (Minh's pool-variance instinct).** k* mean 5.4, CV 0.31. χ-floor tracks k* (corr 0.58, err 0.99); **fixed-k flat (corr 0, err 1.26)**; fixed-k errors ENTIRELY on complexity tails (over-select simple +1.47, truncate complex −1.84). E1/E2 saw parity because tail errors CANCEL in the R²-average. Value = complexity-robustness, measured on the right axis. | `bsf-testA-findings-2026-07-09` |
+| A-ext | p-less / DiffSampling / Top-H vs k* | **p_less_L1 best support-tracker (corr 0.695)** but mis-scaled/over-selects 2.6×. DiffSampling ~random (no cliffs, confirms smooth per-patch profile). Top-H ANTI-correlated (−0.53; entropy≠support in BSF). | `bsf-testA-extended-findings-2026-07-10` |
+| DR | Exa deep research | Verdict: **FDR (Benjamini-Hochberg) IS the canonical answer** to "α-referenced threshold from a null." Conformal prediction = the transfer-guarantee frame. Prior art: **Enkhbayar 2025** (Model-X knockoffs for SAE FDR) — nearest neighbor, but supervised/dataset-level/manufactured-null vs our unsupervised/per-input/measured-null. | `deep-research-generalisable-selection-2026-07-10` |
+| **v1** | **Per-patch BH on χ₃ p-values** | **UNTUNED α=0.10 → corr 0.62 with k*** (2nd best, beats tuned χ-floor). Principled dimensionless knob (target FDR) matches benchmark-tuned heuristics WITHOUT tuning → answers "sound scale-setting." Solves per-sample threshold. BH≡BY here (dependence not distorting). | `bsf-fdr-v1-findings-2026-07-11` |
 
-All on DINOv3 ViT-B/16 patch activations of the 300 rabbit images shipped with the repo (58,800 patches × 768-d), 256 blocks × group_size 3. Scripts in `experiments/scripts/`, outputs + findings in `experiments/results/`.
+## Current landscape: which reference-point families work in BSF
 
-### Step 0 — distribution shape (`02_measure_distributions.py`, `FINDINGS.md`)
-- Block-norm distributions are **NOT cleanly bimodal** (small-pool effect: 256 blocks, unlike a 128k-token vocab).
-- BUT **inactive-block norms fit χ₃ near-perfectly (KS-D = 0.0019)**. group_size=3 → norm of a 3-dim near-Gaussian → χ₃. This means "is block g active?" is a well-posed hypothesis test against a characterized null, with a false-positive-rate (α) interpretation. Training *manufactures* the clean noise floor the top-nσ sampling paper could only assume.
-- k=8 is **unjustified in the repo** (no rationale; README uses 16, notebooks use 8) and cuts a **smooth continuum** (rank-8 vs rank-9 norm differ ~5%).
+- **FDR / null-referenced (BH on χ₃)** — LIVE. Principled α knob, competitive corr, THE current lead.
+- **Participation-ratio (p-less)** — best raw ranking (0.695) but needs α-calibration for scale.
+- **Noise-floor heuristic (χ-floor)** — works, but its q is an arbitrary multiplier (FDR supersedes it with a meaningful knob).
+- **Max-referenced (min-z)** — DEAD (max block untrustworthy/generic).
+- **Gap/curvature (DiffSampling, Min-k)** — DEAD (no cliffs, per-patch or aggregate).
+- **Entropy (Top-H, η, ACS, GUARD)** — DEAD/suspect (Shannon entropy anti-correlates with support here).
 
-### Step 1 (E1) — Pareto on frozen top-k magnitudes (`03_pareto_e1.py`, `FINDINGS_E1.md`)
-- All adaptive selectors **lose** to top-k at matched L0 — **but the test is biased** (magnitudes were trained *with* top-k in the loop; away game for other selectors).
-- Signal despite bias: **perpatch_chi ties top-k (−0.003); min_z loses 10× more (−0.03)** → noise-ref ≫ max-ref confirmed. min_z dropped from contention.
+## Answers to Minh's two theory questions
+- **Q: sound way to set the scale (non-arbitrary knob)?** → α as target FDR against the measured χ₃ null. Dimensionless, same meaning across distributions. DEMONSTRATED: untuned α=0.10 matches tuned heuristics.
+- **Q: do knockoffs (Enkhbayar) make sense here?** → NO. Knockoffs manufacture a null (we measured one) and are supervised/dataset-level (we're unsupervised/per-input). BH-on-measured-χ is the matched tool; only borrow = dependence-robustness (BY variant, tested, no diff).
 
-### Step 2 (E2) — co-adapted training + operating-point robustness (`04_robustness_e2.py`, `FINDINGS_E2.md`)
-- Trained chi-floor selection *in the loop*; swept train × eval operating points.
-- **top-k(8) is the most robust single model** (sags only ~0.05 eval-swept, incl. up to L0=16). No chi robustness advantage on this axis.
-- Why the temperature-invariance analogy breaks here: sparsity budget is a **train-time** property (baked into the learned dictionary), not an **eval-time** transform. No invariance for chi to exploit. Also found: chi's q→L0 map is unstable (chaotic budget targeting) — a real practical downside.
+## Datasets (reference)
+- Our experiments: DINOv3 ViT-B/16 (timm mirror) on the 300 rabbit images shipped with BSF repo.
+- BSF paper's actual evals: DINOv3 (rabbits + shadow/lighting manifolds), **InceptionV1** (curve detectors), **SDXL** (diffusion steering). Rabbits = demo only.
+- Enkhbayar 2025: Pythia-70M SAE latents on SST sentiment (supervised).
 
-### Step 3 (fork a) — monosemanticity at matched L0 (`05b_monosemanticity_matched.py`, `FINDINGS_monosemanticity.md`)
-- Passenger-firing rate, feature selectivity, top-firing input coherence. chi wins all four **but every margin is within noise.** No material monosemanticity win on vision-BSF.
+## Test B (attempted 2026-07-11): FAILED + CONFOUNDED
+Froze rabbit knobs, applied rabbit dictionary to Imagenette. Everything failed (adaptive rules under-selected badly: needed k*=10.1, BH α=0.10 gave 2.1). BUT the test is CONFOUNDED — it conflates "does the selection RULE transfer" with "does the rabbit-trained DICTIONARY transfer." Dictionary domain-shift swamps the signal: the χ₃ null measured on rabbits doesn't describe Imagenette inactive-block norms, so σ̂ is mis-estimated. ROOT CAUSE confirmed: rabbit dict reconstructs Imagenette at R²=0.15 vs 0.81 native — dictionary literally can't represent the images, norm contrast collapses 11.8→3.4, so nothing clears noise floor. Not a selection failure. Honest null+confound, NOT a clean disconfirmation. Detail: `bsf-testB-findings-2026-07-11`. FDR-v1's in-distribution result STANDS (Test B doesn't touch it). **Transfer claim remains UNPROVEN — do not claim it.**
 
-### Step 4 (Test A) — selection-correctness vs per-patch TRUE support (`06_testA_complexity.py`, `FINDINGS_testA.md`) ← **the result that flips the verdict**
-- Defined a rule-agnostic per-patch "true support" k* = min #blocks reaching 95% of that patch's **own achievable peak R²** (peak, not full-256 — the overcomplete non-orthogonal 768×768 decoder makes per-patch R² *peak ~k10 then decline*, a finding in itself).
-- **k*: mean 5.4, CV 0.31** (real per-patch support variance, p5=3, p95=8).
-- At matched mean-selected count: **chi-floor tracks k* (corr 0.58, total selection error 0.99); fixed-k is flat (corr 0, error 1.26 — 21% worse).**
-- **fixed-k's errors are entirely on the tails**: over-selects simple patches by +1.47 blocks (admits noise), truncates complex patches by −1.84 (drops real concepts), ~0 error at the mean. chi spreads small errors evenly. This is the top-nσ mechanism made visible.
-- **Reconciliation:** tail errors cancel in the aggregate R²-average (why E1/E2 saw parity) but not in selection-correctness → the win is robustness across complexity, measured on the right axis.
+## Test B'' (2026-07-11): CLEAN TRANSFER WIN
+Within-rabbit complexity split (LOW k*=4.2 vs HIGH k*=6.8), same dictionary (zero domain shift). Calibrate knob on one half, freeze, test on other. **Adaptive rules cut error 40-67% vs fixed-k and auto-adapt the count in the right direction with a FROZEN knob** (LOW→HIGH: BH widens 4→5.5; HIGH→LOW: BH narrows 7→4.9, corr 0.60). fixed-k stuck at calibration count, wrong by ~2.8 on the other half. First clean evidence the α-knob transfers across a complexity gap where fixed-k structurally can't. Caveats: BH≈chi (FDR's edge is the principled knob, not raw perf); realized-FDR proxy saturated/uninformative (needs real calibration test); LOW→HIGH corr weak (compressed variance) but error win holds. Detail: `bsf-testB2-findings-2026-07-11`.
 
----
+## Test B''' (next): domain transfer with competent dictionary
 
-## Current best hypothesis
+Freeze α on rabbits, apply the χ₃-BH rule to a DIFFERENT image distribution (Imagenette,
+multi-class — downloading), check realized FDR stays ≈ α while fixed-k's effective error
+rate swings. B′: train dictionary on a BROAD set (Imagenette or rabbits+Imagenette), calibrate α on one held-out subset, test on another of similar dictionary-competence — isolates rule transfer from dictionary transfer. B″ (cheapest honest version): within-rabbit low- vs high-complexity split, calibrate α on one half, test realized FDR on the other — zero dictionary shift. Where α's dimensionless-transfer property should beat fixed-k — converting FDR-v1 from "principled option at parity" to "provably robust
+where fixed-k breaks." The whole robustness thesis rides on this.
 
-On vision-BSF, distribution-aware block selection is **not** a reconstruction improvement, but **is** a *complexity-robustness / selection-correctness* improvement: a **noise-floor-referenced (χ) threshold** matches per-patch true support where fixed-k is structurally blind. Whether this translates into a downstream benefit that a practitioner cares about is the open question — the strongest next test is **cross-distribution transfer** (train on one image distribution, evaluate selection-correctness on a different-complexity distribution without re-tuning — does one χ setting hold where fixed-k needs re-tuning?).
-
-## Method-porting menu
-
-`experiments/results/sampling_methods_catalogue.md` — 20 min-p-lineage sampling methods classified by *reference point* (max / cumulative-mass / entropy / noise-floor / feedback / local-curvature) and mapped to BSF ports. Top candidates to prototype next: **η-sampling** (entropy-referenced dual floor), **REAL-sampling-style learned input-conditioned floor** (noise-floor v2), **Mirostat-style feedback control** (fixes χ's unstable hyperparameter), **XTC-style dominant-block exclusion** (the only method in the literature that treats "most probable ≠ trustworthy" — directly targets our max-block problem).
-
-## Reproduce
-
-```bash
-uv venv --python 3.12 .venv && source .venv/bin/activate
-uv pip install -e . && uv pip install timm
-# activations (one-time; needs HF access to a DINOv3 ViT-B/16 or the timm mirror):
-python experiments/scripts/00_dino_activations.py
-python experiments/scripts/01_train_baselines.py
-python experiments/scripts/02_measure_distributions.py   # step 0 shape
-python experiments/scripts/03_pareto_e1.py               # E1
-python experiments/scripts/04_robustness_e2.py           # E2
-python experiments/scripts/06_testA_complexity.py        # Test A (the key one)
-```
-`.npy` activations and `.pt` model weights are gitignored (regenerable from the scripts above).
-
-## Honest caveats
-- Numbers on the timm DINOv3 mirror, not `facebook/dinov3-*` (now approved; re-run pending). Shape/ordering robust.
-- All within-rabbit (single object class). Cross-distribution transfer not yet tested — that's the load-bearing next experiment for the robustness claim.
-- k* is built from norm-ranked greedy addition → mildly sympathetic to norm-based selection generally, but neutral for the fixed-vs-adaptive comparison (both rank by norm).
-- One evening's exploration; not a paper. Sharing to get a second researcher's read on whether the complexity-robustness framing is worth pushing.
+## Caveats carried throughout
+- All numbers on timm DINOv3 mirror (identical weights, non-gated) — facebook/dinov3 now approved, bit-for-bit re-run pending for any pub numbers.
+- k* is norm-ranked-greedy-defined → neutral for fixed-vs-adaptive comparison but not a norm-independent oracle.
+- All within-rabbit until Test B lands.
