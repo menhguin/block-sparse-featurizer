@@ -20,8 +20,9 @@ import torch
 from scipy import stats
 from PIL import Image
 
-BASE = pathlib.Path("/Users/minh/local/ai-research/2026-07-09-bsf-distribution-aware-thresholds")
-RES = BASE/"results"; ROOT = BASE/"block-sparse-featurizer"
+ROOT = pathlib.Path(__file__).resolve().parents[2]   # repo root
+RES = pathlib.Path(__file__).resolve().parents[1] / "results"
+DATA = pathlib.Path(__file__).resolve().parents[1] / "data"
 sys.path.insert(0, str(ROOT)); import bsf
 import timm
 
@@ -29,7 +30,7 @@ device = "mps" if torch.backends.mps.is_available() else "cpu"
 DF=3; N_PREFIX=5; IMG=224
 
 # ---- Imagenette activations through the SAME DINOv3 pipeline ----
-val_imgs = sorted(glob.glob(str(BASE/"data/imagenette2-320/val/**/*.JPEG"), recursive=True))
+val_imgs = sorted(glob.glob(str(DATA/"imagenette2-320/val/**/*.JPEG"), recursive=True))
 rng = np.random.RandomState(0); rng.shuffle(val_imgs)
 val_imgs = val_imgs[:300]   # match rabbit sample size
 

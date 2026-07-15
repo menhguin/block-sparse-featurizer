@@ -13,7 +13,7 @@ import pathlib, sys, json, time
 import numpy as np
 import torch
 
-ROOT = pathlib.Path(__file__).resolve().parents[1] / "block-sparse-featurizer"
+ROOT = pathlib.Path(__file__).resolve().parents[2]   # repo root
 RES = pathlib.Path(__file__).resolve().parents[1] / "results"
 (RES / "models").mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(ROOT))

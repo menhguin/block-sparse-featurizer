@@ -32,10 +32,14 @@ Everything runs on the repo's 300 rabbit images → DINOv3 ViT-B/16 patch activa
 ### 0. Measure the distribution first (`02_measure...`, `FINDINGS.md`)
 Not bimodal — 256 blocks don't separate like a 128k vocab. **But inactive-block norms fit a χ distribution with df=3 near-perfectly (KS D=0.0019).** Group-size-3 blocks → inactive norm = norm of a 3d near-Gaussian → χ₃. Training *manufactures* a clean noise null (reconstruction pressure pushes inactive blocks toward zero) — the thing the top-nσ paper could only assume about logits, BSF gives you for free, measurably.
 
+![Block-norm distributions: not bimodal, but the inactive-block bulk fits χ₃ almost exactly (KS D=0.0019)](results/block_norm_distributions.png)
+
 ### 1-3. Three clean negatives (E1, E2, monosemanticity)
 - **E1** (`03_pareto...`): on frozen top-k-trained magnitudes, every adaptive selector loses to top-k at matched mean-L0. Partially a rigged test (magnitudes co-adapted to top-k), but the *internal ordering* is the signal: **noise-referenced (χ-floor) ties top-k at −0.003 R²; max-referenced (min-z, the literal min-p port) loses 10× worse (−0.03) and its Pareto curve *declines* with more blocks.** The max block-norm is often a generic/positional artifact — the max is an untrustworthy anchor here, the exact *opposite* of logit sampling where the max is the model's best guess. **Max-referencing is dead in this domain.**
 - **E2** (`04_robustness...`): trained χ-floor selection in the loop, swept train×eval operating points. **top-k(8) is the most robust single model** — the temperature-invariance analogy breaks because sparsity budget is a *train-time* property (baked into the dictionary), not an eval-time transform. Also χ-floor's q→L0 map is chaotic under co-adaptation (budget targeting is unstable).
 - **Monosemanticity** (`05b_...`): at matched L0, χ-floor wins all 4 feature-quality metrics (passenger-firing rate, selectivity, top-firing input coherence) but every margin is within noise.
+
+![E1 Pareto: R² vs mean L0 on frozen top-k magnitudes — noise-referenced ties top-k, max-referenced (min-z) collapses](results/pareto_E1.png)
 
 **Interim verdict: on in-distribution aggregate metrics, distribution-aware selection is a reparameterization, not a win.**
 
@@ -43,6 +47,8 @@ Not bimodal — 256 blocks don't separate like a 128k vocab. **But inactive-bloc
 Aggregate R² *averages over* the complexity distribution — fixed-k's errors on simple and complex patches cancel in the mean. So measure **selection correctness** instead: define per-patch true support k* = min blocks reaching 95% of that patch's own *peak* R² (peak, not full-256 — the overcomplete non-orthogonal decoder makes per-patch R² peak ~k=10 then *decline*, which is also why flooding blocks in hurts). k*: mean 5.4, CV 0.31.
 
 At matched mean-selected-count: **fixed-k is flat (corr 0 with k*, by construction); χ-floor tracks true support (corr 0.58) with −21% total selection error. Fixed-k's errors live entirely on the tails: over-selects simple patches by +1.5 blocks, truncates complex ones by −1.8, ~zero error at the mean it was tuned to.** The value of adaptive selection is complexity-tracking/robustness — invisible to the R² average. (Same shape as min-p's actual value being robustness, not benchmark wins.)
+
+![Test A: selected count vs per-patch true support k* — fixed-k is flat by construction; χ-floor tracks complexity](results/testA_selection_vs_support.png)
 
 ### 5. Port the wider sampler family (`07_testA_extended...`)
 Scored against the same k* ground truth:

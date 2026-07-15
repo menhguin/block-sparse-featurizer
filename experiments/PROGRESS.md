@@ -1,19 +1,10 @@
----
-title: "BSF distribution-aware block selection — MASTER PROGRESS"
-created: 2026-07-11
-updated: 2026-07-11
-type: concept
-tags: [ai-research, programmable-models, bsf, min-p, fdr, interpretability]
-status: active exploration — FDR-v1 works, Test B (transfer) is the load-bearing next test
-supersedes_as_entrypoint: [bsf-shape-findings, bsf-e1-pareto-findings, bsf-e2-robustness-findings, bsf-monosemanticity-findings, bsf-testA-findings, bsf-testA-extended-findings, bsf-fdr-v1-findings]
----
-
 # BSF Distribution-Aware Block Selection — Master Progress
 
-**Single entry point** for the min-z/χ-floor/FDR investigation (task #756). The dated
-`bsf-*-findings-*.md` files are the detailed audit trail per experiment; this doc is
-the narrative + current state. Experiment code + data: `~/local/ai-research/2026-07-09-bsf-distribution-aware-thresholds/`.
-Public branch: `github.com/menhguin/block-sparse-featurizer/tree/distribution-aware-block-selection`.
+*Status: active exploration (2026-07-09 → 07-11). FDR-v1 works in-distribution; Test B″ shows clean rule-transfer across a complexity split; domain-shift transfer (B‴) is the load-bearing next test.*
+
+**Single entry point** for the min-z/χ-floor/FDR investigation. The per-experiment
+`results/FINDINGS*.md` files are the detailed audit trail; this doc is the narrative
++ current state. For a friend-facing narrative version, see [`README.md`](README.md).
 
 ## The one-line thesis (evolved over the session)
 
@@ -36,14 +27,14 @@ and transfers across distribution shift without re-tuning.
 
 | # | Experiment | Finding | Detail file |
 |---|---|---|---|
-| 0 | Distribution shape | NOT bimodal, BUT inactive-block norms fit **χ₃ near-perfectly (KS-D=0.0019)** → clean measured noise null exists. k=8 unjustified, cuts a smooth continuum. | `bsf-shape-findings-2026-07-09` |
-| E1 | Pareto on frozen top-k magnitudes | All adaptive lose at matched L0 (biased test — magnitudes co-adapted to top-k). Signal: **noise-ref (χ) ≫ max-ref (min-z)** by 10×. min-z dropped. | `bsf-e1-pareto-findings-2026-07-09` |
-| E2 | Co-adapted training + operating-point robustness | top-k(8) most robust single model; no χ advantage on THIS axis. Temp-invariance analogy breaks (sparsity budget is train-time, not eval-time). χ has unstable q→L0 targeting. | `bsf-e2-robustness-findings-2026-07-09` |
-| fork-a | Monosemanticity at matched L0 | χ wins all 4 metrics but **within noise**. No material monosemanticity win. | `bsf-monosemanticity-findings-2026-07-09` |
-| **A** | **Selection-correctness vs per-patch true support k*** | **THE REFRAME (Minh's pool-variance instinct).** k* mean 5.4, CV 0.31. χ-floor tracks k* (corr 0.58, err 0.99); **fixed-k flat (corr 0, err 1.26)**; fixed-k errors ENTIRELY on complexity tails (over-select simple +1.47, truncate complex −1.84). E1/E2 saw parity because tail errors CANCEL in the R²-average. Value = complexity-robustness, measured on the right axis. | `bsf-testA-findings-2026-07-09` |
-| A-ext | p-less / DiffSampling / Top-H vs k* | **p_less_L1 best support-tracker (corr 0.695)** but mis-scaled/over-selects 2.6×. DiffSampling ~random (no cliffs, confirms smooth per-patch profile). Top-H ANTI-correlated (−0.53; entropy≠support in BSF). | `bsf-testA-extended-findings-2026-07-10` |
-| DR | Exa deep research | Verdict: **FDR (Benjamini-Hochberg) IS the canonical answer** to "α-referenced threshold from a null." Conformal prediction = the transfer-guarantee frame. Prior art: **Enkhbayar 2025** (Model-X knockoffs for SAE FDR) — nearest neighbor, but supervised/dataset-level/manufactured-null vs our unsupervised/per-input/measured-null. | `deep-research-generalisable-selection-2026-07-10` |
-| **v1** | **Per-patch BH on χ₃ p-values** | **UNTUNED α=0.10 → corr 0.62 with k*** (2nd best, beats tuned χ-floor). Principled dimensionless knob (target FDR) matches benchmark-tuned heuristics WITHOUT tuning → answers "sound scale-setting." Solves per-sample threshold. BH≡BY here (dependence not distorting). | `bsf-fdr-v1-findings-2026-07-11` |
+| 0 | Distribution shape | NOT bimodal, BUT inactive-block norms fit **χ₃ near-perfectly (KS-D=0.0019)** → clean measured noise null exists. k=8 unjustified, cuts a smooth continuum. | [`results/FINDINGS.md`](results/FINDINGS.md) |
+| E1 | Pareto on frozen top-k magnitudes | All adaptive lose at matched L0 (biased test — magnitudes co-adapted to top-k). Signal: **noise-ref (χ) ≫ max-ref (min-z)** by 10×. min-z dropped. | [`results/FINDINGS_E1.md`](results/FINDINGS_E1.md) |
+| E2 | Co-adapted training + operating-point robustness | top-k(8) most robust single model; no χ advantage on THIS axis. Temp-invariance analogy breaks (sparsity budget is train-time, not eval-time). χ has unstable q→L0 targeting. | [`results/FINDINGS_E2.md`](results/FINDINGS_E2.md) |
+| fork-a | Monosemanticity at matched L0 | χ wins all 4 metrics but **within noise**. No material monosemanticity win. | [`results/FINDINGS_monosemanticity.md`](results/FINDINGS_monosemanticity.md) |
+| **A** | **Selection-correctness vs per-patch true support k*** | **THE REFRAME (the pool-variance instinct).** k* mean 5.4, CV 0.31. χ-floor tracks k* (corr 0.58, err 0.99); **fixed-k flat (corr 0, err 1.26)**; fixed-k errors ENTIRELY on complexity tails (over-select simple +1.47, truncate complex −1.84). E1/E2 saw parity because tail errors CANCEL in the R²-average. Value = complexity-robustness, measured on the right axis. | [`results/FINDINGS_testA.md`](results/FINDINGS_testA.md) |
+| A-ext | p-less / DiffSampling / Top-H vs k* | **p_less_L1 best support-tracker (corr 0.695)** but mis-scaled/over-selects 2.6×. DiffSampling ~random (no cliffs, confirms smooth per-patch profile). Top-H ANTI-correlated (−0.53; entropy≠support in BSF). | [`results/FINDINGS_testA_extended.md`](results/FINDINGS_testA_extended.md) |
+| DR | Exa deep research | Verdict: **FDR (Benjamini-Hochberg) IS the canonical answer** to "α-referenced threshold from a null." Conformal prediction = the transfer-guarantee frame. Prior art: **Enkhbayar 2025** (Model-X knockoffs for SAE FDR) — nearest neighbor, but supervised/dataset-level/manufactured-null vs our unsupervised/per-input/measured-null. | [`results/deep-research-report.md`](results/deep-research-report.md) |
+| **v1** | **Per-patch BH on χ₃ p-values** | **UNTUNED α=0.10 → corr 0.62 with k*** (2nd best, beats tuned χ-floor). Principled dimensionless knob (target FDR) matches benchmark-tuned heuristics WITHOUT tuning → answers "sound scale-setting." Solves per-sample threshold. BH≡BY here (dependence not distorting). | [`results/FINDINGS_fdr_v1.md`](results/FINDINGS_fdr_v1.md) |
 
 ## Current landscape: which reference-point families work in BSF
 
@@ -54,7 +45,7 @@ and transfers across distribution shift without re-tuning.
 - **Gap/curvature (DiffSampling, Min-k)** — DEAD (no cliffs, per-patch or aggregate).
 - **Entropy (Top-H, η, ACS, GUARD)** — DEAD/suspect (Shannon entropy anti-correlates with support here).
 
-## Answers to Minh's two theory questions
+## Answers to the two motivating theory questions
 - **Q: sound way to set the scale (non-arbitrary knob)?** → α as target FDR against the measured χ₃ null. Dimensionless, same meaning across distributions. DEMONSTRATED: untuned α=0.10 matches tuned heuristics.
 - **Q: do knockoffs (Enkhbayar) make sense here?** → NO. Knockoffs manufacture a null (we measured one) and are supervised/dataset-level (we're unsupervised/per-input). BH-on-measured-χ is the matched tool; only borrow = dependence-robustness (BY variant, tested, no diff).
 
@@ -64,10 +55,10 @@ and transfers across distribution shift without re-tuning.
 - Enkhbayar 2025: Pythia-70M SAE latents on SST sentiment (supervised).
 
 ## Test B (attempted 2026-07-11): FAILED + CONFOUNDED
-Froze rabbit knobs, applied rabbit dictionary to Imagenette. Everything failed (adaptive rules under-selected badly: needed k*=10.1, BH α=0.10 gave 2.1). BUT the test is CONFOUNDED — it conflates "does the selection RULE transfer" with "does the rabbit-trained DICTIONARY transfer." Dictionary domain-shift swamps the signal: the χ₃ null measured on rabbits doesn't describe Imagenette inactive-block norms, so σ̂ is mis-estimated. ROOT CAUSE confirmed: rabbit dict reconstructs Imagenette at R²=0.15 vs 0.81 native — dictionary literally can't represent the images, norm contrast collapses 11.8→3.4, so nothing clears noise floor. Not a selection failure. Honest null+confound, NOT a clean disconfirmation. Detail: `bsf-testB-findings-2026-07-11`. FDR-v1's in-distribution result STANDS (Test B doesn't touch it). **Transfer claim remains UNPROVEN — do not claim it.**
+Froze rabbit knobs, applied rabbit dictionary to Imagenette. Everything failed (adaptive rules under-selected badly: needed k*=10.1, BH α=0.10 gave 2.1). BUT the test is CONFOUNDED — it conflates "does the selection RULE transfer" with "does the rabbit-trained DICTIONARY transfer." Dictionary domain-shift swamps the signal: the χ₃ null measured on rabbits doesn't describe Imagenette inactive-block norms, so σ̂ is mis-estimated. ROOT CAUSE confirmed: rabbit dict reconstructs Imagenette at R²=0.15 vs 0.81 native — dictionary literally can't represent the images, norm contrast collapses 11.8→3.4, so nothing clears noise floor. Not a selection failure. Honest null+confound, NOT a clean disconfirmation. Detail: [`results/FINDINGS_testB.md`](results/FINDINGS_testB.md). FDR-v1's in-distribution result STANDS (Test B doesn't touch it). **Transfer claim remains UNPROVEN — do not claim it.**
 
 ## Test B'' (2026-07-11): CLEAN TRANSFER WIN
-Within-rabbit complexity split (LOW k*=4.2 vs HIGH k*=6.8), same dictionary (zero domain shift). Calibrate knob on one half, freeze, test on other. **Adaptive rules cut error 40-67% vs fixed-k and auto-adapt the count in the right direction with a FROZEN knob** (LOW→HIGH: BH widens 4→5.5; HIGH→LOW: BH narrows 7→4.9, corr 0.60). fixed-k stuck at calibration count, wrong by ~2.8 on the other half. First clean evidence the α-knob transfers across a complexity gap where fixed-k structurally can't. Caveats: BH≈chi (FDR's edge is the principled knob, not raw perf); realized-FDR proxy saturated/uninformative (needs real calibration test); LOW→HIGH corr weak (compressed variance) but error win holds. Detail: `bsf-testB2-findings-2026-07-11`.
+Within-rabbit complexity split (LOW k*=4.2 vs HIGH k*=6.8), same dictionary (zero domain shift). Calibrate knob on one half, freeze, test on other. **Adaptive rules cut error 40-67% vs fixed-k and auto-adapt the count in the right direction with a FROZEN knob** (LOW→HIGH: BH widens 4→5.5; HIGH→LOW: BH narrows 7→4.9, corr 0.60). fixed-k stuck at calibration count, wrong by ~2.8 on the other half. First clean evidence the α-knob transfers across a complexity gap where fixed-k structurally can't. Caveats: BH≈chi (FDR's edge is the principled knob, not raw perf); realized-FDR proxy saturated/uninformative (needs real calibration test); LOW→HIGH corr weak (compressed variance) but error win holds. Detail: [`results/FINDINGS_testB2.md`](results/FINDINGS_testB2.md).
 
 ## Test B''' (next): domain transfer with competent dictionary
 

@@ -37,7 +37,7 @@ import torch
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = pathlib.Path(__file__).resolve().parents[1] / "block-sparse-featurizer"
+ROOT = pathlib.Path(__file__).resolve().parents[2]   # repo root
 RES = pathlib.Path(__file__).resolve().parents[1] / "results"
 sys.path.insert(0, str(ROOT))
 import bsf

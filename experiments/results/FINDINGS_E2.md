@@ -1,6 +1,6 @@
 # E2 robustness results — the robustness win goes to top-k, not chi (2026-07-09)
 
-**Minh's reframe tested:** does chi-floor give operating-point robustness (one setting
+**The reframe tested:** does chi-floor give operating-point robustness (one setting
 covers the sparsity-budget range) the way top-nσ gives temperature robustness? Plot:
 `robustness_curves.png`. Table: `train_eval_matrix.json`.
 
@@ -52,7 +52,7 @@ robustness. That is a clean, reportable negative.
 
 ## The important caveat — we've only tested the WRONG metric for the thesis
 
-R² is a RECONSTRUCTION metric. Minh's whole thesis is INTERPRETABILITY (monosemanticity,
+R² is a RECONSTRUCTION metric. The whole thesis is INTERPRETABILITY (monosemanticity,
 attribution). The theory always said the R² win would be marginal and the *real* payoff
 is mechanism 2 — chi-floor not forcing blocks to fire on the sparse tail => cleaner
 monosemantic dictionaries. We have NOT measured that. Two negatives on R²/robustness do
@@ -60,7 +60,7 @@ NOT touch the monosemanticity claim. The live question is whether chi-floor prod
 monosemantic / less-polluted features at matched R², which needs a concept-purity metric
 (e.g. per-block firing consistency, or the paper's manifold-quality measures), not R².
 
-## Next-decision fork (for Minh)
+## Next-decision fork
 - (a) pivot the metric to monosemanticity/concept-purity — the thesis-aligned test we
   haven't run; the only place a win is still theoretically expected; OR
 - (b) call distribution-aware *selection* a negative on vision-BSF and move to idea #2

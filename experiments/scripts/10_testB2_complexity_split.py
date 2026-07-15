@@ -22,8 +22,8 @@ import pathlib, sys, json
 import numpy as np, torch
 from scipy import stats
 
-RES=pathlib.Path("/Users/minh/local/ai-research/2026-07-09-bsf-distribution-aware-thresholds/results")
-ROOT=pathlib.Path("/Users/minh/local/ai-research/2026-07-09-bsf-distribution-aware-thresholds/block-sparse-featurizer")
+RES=pathlib.Path(__file__).resolve().parents[1] / "results"
+ROOT=pathlib.Path(__file__).resolve().parents[2]   # repo root
 sys.path.insert(0,str(ROOT)); import bsf
 DF=3
 

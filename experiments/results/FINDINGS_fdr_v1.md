@@ -28,7 +28,7 @@ point is the KNOB:
 - Every other competitive method's knob is dataset-arbitrary: chi-floor's q,
   min_z's p, fixed-k's k=8 are all "whatever scored best here." α is dimensionless
   and carries the same meaning on any distribution.
-- This is the answer to Minh's Q2 (theoretically-sound scale-setting) DEMONSTRATED:
+- This is the answer to Q2 (theoretically-sound scale-setting) DEMONSTRATED:
   the α-referenced rule matches the best benchmark-tuned heuristic WITHOUT being
   benchmark-tuned. The can stops rolling.
 
@@ -47,7 +47,7 @@ sample."
 - Robust per-patch σ̂ estimated from the 40th-percentile of block norms inverted
   through the χ₃ CDF (low quantile so active blocks don't inflate the noise scale).
 
-## Knockoffs verdict (Minh's Q on whether to use Enkhbayar's method)
+## Knockoffs verdict (should we use Enkhbayar's method here?)
 NO — mismatched twice: (1) knockoffs MANUFACTURE a null when you can't write one
 down; we MEASURED χ₃ (KS-D=0.0019), so knockoffs are a sledgehammer avoiding a
 scalpel we own; (2) knockoff+ is DATASET-level SUPERVISED selection (features vs a

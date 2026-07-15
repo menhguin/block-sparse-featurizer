@@ -1,6 +1,6 @@
 """FDR v1: per-patch Benjamini-Hochberg selection on chi_3 p-values.
 
-Answers Minh's "define a threshold per sample" via multiple-testing, using our
+Answers "define a threshold per sample" via multiple-testing, using our
 MEASURED chi_3 null (not manufactured knockoffs — see reasoning: knockoffs are
 for the no-analytic-null, supervised, dataset-level case; we have a measured
 null and need per-input unsupervised selection, so BH-per-patch is the match).
@@ -24,8 +24,8 @@ import numpy as np
 import torch
 from scipy import stats
 
-RES = pathlib.Path("/Users/minh/local/ai-research/2026-07-09-bsf-distribution-aware-thresholds/results")
-ROOT = pathlib.Path("/Users/minh/local/ai-research/2026-07-09-bsf-distribution-aware-thresholds/block-sparse-featurizer")
+RES = pathlib.Path(__file__).resolve().parents[1] / "results"
+ROOT = pathlib.Path(__file__).resolve().parents[2]   # repo root
 sys.path.insert(0, str(ROOT)); import bsf
 
 device="cpu"

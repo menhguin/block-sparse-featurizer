@@ -22,7 +22,7 @@ Preprocessing mirrors the notebook spirit:
   x = rearrange 'n p d -> (n p) d'                    # (58800, 768)
   x = x / sqrt(mean ||x||^2) * sqrt(d)                # scale so ||x|| ~ sqrt(d)
 
-Caches x -> results/acts.npy. Run once from the experiment root with venv active.
+Caches x -> experiments/results/acts.npy. Run once from the repo root with venv active.
 """
 import pathlib, sys
 import numpy as np
@@ -30,7 +30,7 @@ import torch
 import einops
 import timm
 
-ROOT = pathlib.Path(__file__).resolve().parents[1] / "block-sparse-featurizer"
+ROOT = pathlib.Path(__file__).resolve().parents[2]   # repo root
 OUT = pathlib.Path(__file__).resolve().parents[1] / "results"
 OUT.mkdir(exist_ok=True)
 sys.path.insert(0, str(ROOT))

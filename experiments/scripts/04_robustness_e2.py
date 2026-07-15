@@ -1,5 +1,5 @@
 """Step 4 (E2 / robustness): does chi-floor give operating-point robustness that
-fixed top-k lacks?  (Minh's reframe, 2026-07-09)
+fixed top-k lacks?  (reframe, 2026-07-09)
 
 FAITHFUL TRANSFER of top-nsigma's real selling point: not higher R2, but
 STABILITY across an operating condition that breaks the fixed-parameter baseline.
@@ -32,7 +32,7 @@ import torch
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = pathlib.Path(__file__).resolve().parents[1] / "block-sparse-featurizer"
+ROOT = pathlib.Path(__file__).resolve().parents[2]   # repo root
 RES = pathlib.Path(__file__).resolve().parents[1] / "results"
 (RES / "models_e2").mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(ROOT))

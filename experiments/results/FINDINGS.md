@@ -12,7 +12,7 @@ Plot: `block_norm_distributions.png` (rows=substrate; A=global log-y hist, B=act
 
 ## The three headline reads
 
-**1. NOT dramatically bimodal at the global level (Minh's doubt: directionally right).**
+**1. NOT dramatically bimodal at the global level (the pre-experiment doubt: directionally right).**
 Panel A for all three = one big spike near 0-3 + a smooth heavy right tail. No screaming valley. The small-vocab intuition held: 256 blocks don't produce the clean two-hump separation a 128k-vocab logit distribution does. min-z (max-anchored, *needs* a sharp knee/gap) has a **weak** case here.
 
 **2. BUT the noise floor is textbook chi₃ — the chi-floor precondition is met beautifully.**

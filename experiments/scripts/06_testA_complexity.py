@@ -1,6 +1,6 @@
 """Test A: complexity-shift / selection-correctness vs per-patch TRUE support.
 
-The reframe (Minh, 2026-07-09): E1/E2 tested in-distribution R²-average, which
+The reframe (2026-07-09): E1/E2 tested in-distribution R²-average, which
 AVERAGES OVER the complexity distribution and hides tail errors. top-nsigma's
 actual win was ROBUSTNESS to a shift the fixed rule isn't tuned for. Effective-
 support CV here = 0.675 (measured) => there IS real per-patch complexity variance;
@@ -31,7 +31,7 @@ import torch
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = pathlib.Path(__file__).resolve().parents[1] / "block-sparse-featurizer"
+ROOT = pathlib.Path(__file__).resolve().parents[2]   # repo root
 RES = pathlib.Path(__file__).resolve().parents[1] / "results"
 sys.path.insert(0, str(ROOT))
 import bsf

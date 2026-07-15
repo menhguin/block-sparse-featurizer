@@ -9,6 +9,8 @@
 
 </div>
 
+> **🔀 Fork note (`distribution-aware-block-selection` branch):** this fork adds an exploratory study of **distribution-aware / FDR-controlled block selection** — replacing the fixed top-k=8 block rule with per-input adaptive selection against a *measured* χ₃ noise null (min-p / top-nσ lineage → Benjamini-Hochberg FDR). All fork work lives in [`experiments/`](experiments/) — start with [`experiments/README.md`](experiments/README.md) (narrative + results) or [`experiments/PROGRESS.md`](experiments/PROGRESS.md) (experiment ledger). Upstream code is untouched. Everything below this line is the original Goodfire README.
+
 ---
 
 <img src="assets/figure_1.png" width="100%" alt="Block-sparse featurizers capture the internal geometry of concepts."/>

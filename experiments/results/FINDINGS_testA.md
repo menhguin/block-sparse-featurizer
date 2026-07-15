@@ -1,6 +1,6 @@
 # Test A — selection-correctness vs per-patch true support (2026-07-09) — ADAPTIVE WINS
 
-**The reframe that produced it (Minh):** E1/E2 tested in-distribution R²-*average*,
+**The reframe that produced it:** E1/E2 tested in-distribution R²-*average*,
 which averages over the complexity distribution and hides tail errors. top-nσ's
 real win was matching per-input structure. Test A measures selection *correctness*
 against a rule-agnostic per-patch "true support" k*.
@@ -75,5 +75,5 @@ NOT a flat negative. Refined: **on vision-BSF, distribution-aware selection is a
 selection-correctness / complexity-robustness improvement (chi-floor −21% total
 selection error, tracks true support tercile-by-tercile) that does NOT show up in
 in-distribution aggregate R². chi-floor > min_z (lowest error + stable). The
-in-distribution-R² framing was measuring the wrong axis; Minh's pool-variance /
+in-distribution-R² framing was measuring the wrong axis; the pool-variance /
 robustness reframe found the right one.** Next: Test B (cross-distribution transfer).
